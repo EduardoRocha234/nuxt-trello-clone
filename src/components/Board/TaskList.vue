@@ -22,6 +22,7 @@
 				v-model="newTask"
 				placeholder="Enter a title for this card..."
 				@focus="clickOutsideTextearea = false"
+				@keydown.enter="addTask()"
 			/>
 		</template>
 	</draggable>

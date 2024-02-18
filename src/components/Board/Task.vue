@@ -24,6 +24,7 @@
 			v-model="taskValue"
 			:readonly="!inputIsFocused"
 			class="text-white w-full resize-none appearance-none bg-transparent h-auto reset focus-none outline-none"
+			@keydown.enter="inputIsFocused = false"
 		/>
 	</div>
 </template>

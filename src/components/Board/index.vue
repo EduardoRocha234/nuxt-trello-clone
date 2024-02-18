@@ -26,6 +26,9 @@
 					</template>
 				</BoardColumn>
 			</template>
+			<template #footer>
+				<button @click="addColumn()" class="w-60 text-white bg-gray-400 px-4 py-2 rounded-md hover:bg-gray-600">Add another list</button>
+			</template>
 		</draggable>
 	</div>
 </template>
@@ -33,11 +36,12 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
 import {nanoid} from 'nanoid'
+import {useLocalStorage} from '@vueuse/core'
 import type {ColumType, NewTaskType} from '@/types/board.type'
 
 const drag = ref<boolean>(false)
 
-const board = reactive<ColumType[]>([
+const board = useLocalStorage<ColumType[]>('boardList', [
 	{
 		id: nanoid(),
 		name: 'teste 1',
@@ -77,14 +81,24 @@ const board = reactive<ColumType[]>([
 ])
 
 const addNewTask = ({taskValue, columnId}: NewTaskType) => {
-	const colIdx = board.findIndex((t) => t.id === columnId)
+	const colIdx = board.value.findIndex((t) => t.id === columnId)
 	if (colIdx !== -1) {
-		board[colIdx].tasks.push({
+		board.value[colIdx].tasks.push({
 			id: nanoid(),
 			title: taskValue,
 			createdAt: new Date(),
 		})
 	}
+}
+
+const addColumn = () => {
+	const newColumn: ColumType = {
+		id: nanoid(),
+		name: 'New Column',
+		tasks: [],
+	}
+
+	board.value.push(newColumn)
 }
 </script>
 <style scoped></style>
