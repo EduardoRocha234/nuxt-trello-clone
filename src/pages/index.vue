@@ -1,48 +1,51 @@
 <template>
-	<div class="h-screen flex items-center justify-center">
-        <draggable 
-            :list="test" 
-            group="name" 
-            @start="drag = true" 
-            @end="drag = false" 
-            item-key="id">
-            <template #item="{element}">
-                <div>{{element.name}}</div>
-            </template>
-        </draggable>
-    </div>
+	<div class="h-screen p-4">
+		<Board :board="boardListExample"/>
+	</div>
 </template>
 
 <script setup lang="ts">
-    import draggable from 'vuedraggable'
+import {nanoid} from 'nanoid'
+import {useLocalStorage} from '@vueuse/core'
+import type {ColumType} from '~/types/board.type'
 
-    const drag = ref<boolean>(false)
-
-    const test = reactive([
-        {
-            id: 1,
-            name: 'teste 1'
-        },
-        {
-            id: 2,
-            name: 'teste 2'
-        },
-        {
-            id: 3,
-            name: 'teste 3' 
-        },
-        {
-            id: 4,
-            name: 'teste 4'
-        },
-        {
-            id: 5,
-            name: 'teste 5'
-        },
-        {
-            id: 6,
-            name: 'teste 6'
-        },
-    ])
+const boardListExample = useLocalStorage<ColumType[]>('boardList', [
+	{
+		id: nanoid(),
+		name: 'Product Backlog',
+		tasks: [
+			{
+				id: nanoid(),
+				title: 'Fix bug',
+				createdAt: new Date(),
+			},
+			{
+				id: nanoid(),
+				title: 'Fix bug 1',
+				createdAt: new Date(),
+			},
+			{
+				id: nanoid(),
+				title: 'Fix bug 2',
+				createdAt: new Date(),
+			},
+		],
+	},
+	{
+		id: nanoid(),
+		name: 'Sprint Backlog',
+		tasks: [],
+	},
+	{
+		id: nanoid(),
+		name: 'In Progress',
+		tasks: [],
+	},
+	{
+		id: nanoid(),
+		name: 'Done',
+		tasks: [],
+	},
+])
 </script>
 <style scoped></style>
