@@ -27,7 +27,12 @@
 				</BoardColumn>
 			</template>
 			<template #footer>
-				<button @click="addColumn()" class="w-60 text-white bg-gray-400 px-4 py-2 rounded-md hover:bg-gray-600">Add another list</button>
+				<button
+					@click="addColumn()"
+					class="w-60 text-white bg-gray-400 px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
+				>
+					Add another list
+				</button>
 			</template>
 		</draggable>
 	</div>
@@ -36,49 +41,23 @@
 <script setup lang="ts">
 import draggable from 'vuedraggable'
 import {nanoid} from 'nanoid'
-import {useLocalStorage} from '@vueuse/core'
 import type {ColumType, NewTaskType} from '@/types/board.type'
 
 const drag = ref<boolean>(false)
 
-const board = useLocalStorage<ColumType[]>('boardList', [
-	{
-		id: nanoid(),
-		name: 'teste 1',
-		tasks: [
-			{
-				id: nanoid(),
-				title: 'Fix bug',
-				createdAt: new Date(),
-			},
-			{
-				id: nanoid(),
-				title: 'Fix bug 1',
-				createdAt: new Date(),
-			},
-			{
-				id: nanoid(),
-				title: 'Fix bug 2',
-				createdAt: new Date(),
-			},
-		],
-	},
-	{
-		id: nanoid(),
-		name: 'teste 2',
-		tasks: [],
-	},
-	{
-		id: nanoid(),
-		name: 'teste 3',
-		tasks: [],
-	},
-	{
-		id: nanoid(),
-		name: 'teste 4',
-		tasks: [],
-	},
-])
+const props = defineProps<{
+	board: ColumType[]
+}>()
+
+const {board} = toRefs(props)
+
+const emit = defineEmits<{
+	(event: 'update:board', value: ColumType[]): void
+}>()
+
+const updateBoard = () => {
+	emit('update:board', board.value)
+}
 
 const addNewTask = ({taskValue, columnId}: NewTaskType) => {
 	const colIdx = board.value.findIndex((t) => t.id === columnId)
@@ -88,6 +67,7 @@ const addNewTask = ({taskValue, columnId}: NewTaskType) => {
 			title: taskValue,
 			createdAt: new Date(),
 		})
+		updateBoard()
 	}
 }
 
@@ -99,6 +79,7 @@ const addColumn = () => {
 	}
 
 	board.value.push(newColumn)
+	updateBoard()
 }
 </script>
 <style scoped></style>
